@@ -1,4 +1,4 @@
-module migration-tool
+module github.com/ChristophBe/migration-tool
 
 go 1.20
 
