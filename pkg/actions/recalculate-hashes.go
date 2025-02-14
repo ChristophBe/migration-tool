@@ -12,13 +12,13 @@ func RecalculateHashes(folder string) error {
 		return fmt.Errorf("error read migration definition: %w", err)
 	}
 	prevHash := ""
-	for i, migration := range config.Migrations {
+	for i, migration := range config.Steps {
 		scriptPath := filepath.Join(folder, migration.Filename)
 		hash, err := CalculateHash(scriptPath, prevHash)
 		if err != nil {
 			return err
 		}
-		config.Migrations[i].Hash = hash
+		config.Steps[i].Hash = hash
 		prevHash = hash
 	}
 	return saveMigrationDefinition(folder, config)

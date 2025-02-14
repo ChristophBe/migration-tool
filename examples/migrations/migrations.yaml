@@ -1,4 +1,4 @@
-migrations:
+steps:
 - filename: 001_first_step.sh
   description: |
     Execute step one of the migrations.

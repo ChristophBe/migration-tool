@@ -17,7 +17,7 @@ func Verify(folder string) (bool, error) {
 func verifyDefinition(folder string, migrationDefinition *MigrationDefinition) (bool, error) {
 	prevHash := ""
 	changed := false
-	for _, migration := range migrationDefinition.Migrations {
+	for _, migration := range migrationDefinition.Steps {
 		scriptPath := filepath.Join(folder, migration.Filename)
 		hash, err := CalculateHash(scriptPath, prevHash)
 		if err != nil {

@@ -20,6 +20,7 @@ func main() {
 	}
 
 	folder := flag.String("folder", "migrations", "Folder where migrations.yaml and scripts are located")
+	outputFolder := flag.String("outFolder", "", "Folder where the output file will be stored")
 	flag.Parse()
 
 	if flag.NArg() < 1 {
@@ -45,8 +46,8 @@ func main() {
 			os.Exit(1)
 		}
 	case "run":
-		if err := actions.Run(*folder); err != nil {
-			log.Fatal("Error running migrations :", err)
+		if err := actions.Run(*folder, *outputFolder); err != nil {
+			log.Fatal("Error running migrations: ", err)
 		}
 	case "help":
 		flag.Usage()

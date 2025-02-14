@@ -1,19 +1,21 @@
 package actions
 
-type Migration struct {
+import "time"
+
+type MigrationStep struct {
 	Filename    string `yaml:"filename"`
 	Description string `yaml:"description"`
 	Hash        string `yaml:"hash"`
 }
 
 type MigrationDefinition struct {
-	Migrations []Migration `yaml:"migrations"`
+	Steps []MigrationStep `yaml:"steps"`
 }
 
-type Output struct {
-	ExecutedSteps []ExecutionStep `yaml:"executedSteps"`
+type Results struct {
+	Steps []StepResult `yaml:"steps"`
 }
-type ExecutionStep struct {
-	Timestamp string `yaml:"timestamp"`
-	Hash      string `yaml:"hash"`
+type StepResult struct {
+	Timestamp time.Time `yaml:"timestamp"`
+	Hash      string    `yaml:"hash"`
 }
