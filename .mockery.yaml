@@ -1,0 +1,12 @@
+with-expecter: true
+filename: "{{.InterfaceName}}.gen.go"
+dir: "internal/mocks/{{.PackageName}}_mocks"
+outpkg: "{{.PackageName}}_mocks"
+mockname: "{{.InterfaceName}}"
+
+
+packages:
+  github.com/ChristophBe/migration-tool/cmd/migration-tool:
+
+
+

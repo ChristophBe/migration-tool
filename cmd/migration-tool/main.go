@@ -30,15 +30,19 @@ func main() {
 
 	command := flag.Arg(0)
 
-	var err error
+	RunCommands(actions.New(), command, *folder, *outputFolder)
+}
+func RunCommands(act Actions, command, folder string, outputFolder string) {
+
 	switch command {
 	case "recalculate-hashes":
-		if err := actions.RecalculateHashes(*folder); err != nil {
+		if err := act.RecalculateHashes(folder); err != nil {
 			log.Fatal("Error recalculating hashes:", err)
 		}
 	case "verify":
 		var changesDetected bool
-		if changesDetected, err = actions.Verify(*folder); err != nil {
+		var err error
+		if changesDetected, err = act.Verify(folder); err != nil {
 			log.Fatal("Error verifying migrations:", err)
 		}
 
@@ -46,7 +50,7 @@ func main() {
 			os.Exit(1)
 		}
 	case "run":
-		if err := actions.Run(*folder, *outputFolder); err != nil {
+		if err := act.Run(folder, outputFolder); err != nil {
 			log.Fatal("Error running migrations: ", err)
 		}
 	case "help":

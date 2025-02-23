@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-func Verify(folder string) (bool, error) {
+func (a *Actions) Verify(folder string) (bool, error) {
 
 	migrationDefinition, err := loadMigrationDefinition(folder)
 	if err != nil {

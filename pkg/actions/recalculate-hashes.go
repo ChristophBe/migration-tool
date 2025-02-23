@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-func RecalculateHashes(folder string) error {
+func (a *Actions) RecalculateHashes(folder string) error {
 
 	config, err := loadMigrationDefinition(folder)
 	if err != nil {

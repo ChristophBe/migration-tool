@@ -14,7 +14,7 @@ const (
 	migrationFileName = "migrations.yaml"
 )
 
-func Run(folder, outputFolder string) error {
+func (a *Actions) Run(folder, outputFolder string) error {
 	definition, err := loadMigrationDefinition(folder)
 	if err != nil {
 		return fmt.Errorf("error read step definition: %w", err)
