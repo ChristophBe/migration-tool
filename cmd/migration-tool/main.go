@@ -30,28 +30,30 @@ func main() {
 
 	command := flag.Arg(0)
 
-	RunCommands(actions.New(), command, *folder, *outputFolder)
+	err := RunCommands(actions.New(), command, *folder, *outputFolder)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
-func RunCommands(act Actions, command, folder string, outputFolder string) {
+func RunCommands(act Actions, command, folder string, outputFolder string) (err error) {
 
 	switch command {
 	case "recalculate-hashes":
 		if err := act.RecalculateHashes(folder); err != nil {
-			log.Fatal("Error recalculating hashes:", err)
+			return fmt.Errorf("error recalculating hashes: %w", err)
 		}
 	case "verify":
 		var changesDetected bool
-		var err error
 		if changesDetected, err = act.Verify(folder); err != nil {
-			log.Fatal("Error verifying migrations:", err)
+			return fmt.Errorf("error verifying migrations: %w", err)
 		}
 
 		if changesDetected {
-			os.Exit(1)
+			return fmt.Errorf("changes were detected during verification")
 		}
 	case "run":
-		if err := act.Run(folder, outputFolder); err != nil {
-			log.Fatal("Error running migrations: ", err)
+		if err = act.Run(folder, outputFolder); err != nil {
+			return fmt.Errorf("error running migrations: %w", err)
 		}
 	case "help":
 		flag.Usage()
@@ -59,6 +61,6 @@ func RunCommands(act Actions, command, folder string, outputFolder string) {
 	default:
 		fmt.Println("Unknown command:", command)
 		flag.Usage()
-		os.Exit(1)
 	}
+	return nil
 }
