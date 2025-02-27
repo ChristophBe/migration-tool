@@ -5,6 +5,12 @@ With the migration tool steps that are based of bash scripts can be defined and 
 
 # Usage
 
+## Run with Docker
+```bash
+docker run -v ./examples/migrations:/migrations ghcr.io/christophbe/migration-tool:latest run
+```
+
+
 ## Commands
 ### Run Migrations
 Run all migration steps, that were not executed before.
@@ -13,8 +19,6 @@ migration-tool run -folder migrations
 ```
 
 If any migration file has changed, execution will be aborted to prevent inconsistency.
-
-
 
 ### Recalculate Hashes
 Recalculate the hashes of migration scripts and update `migrations.yaml`.
