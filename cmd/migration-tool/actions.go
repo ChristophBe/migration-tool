@@ -1,7 +1,7 @@
 package main
 
 type Actions interface {
-	Run(folder string, outputFolder string) error
+	Run(folder string) error
 	Verify(folder string) (bool, error)
 	RecalculateHashes(folder string) error
 }

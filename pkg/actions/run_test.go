@@ -60,7 +60,7 @@ echo "` + runOutput + `" >> ` + s.runOutputFile + `
 func (s *ActionRunTestSuite) TestRun() {
 	_, expectedOutput := s.addMirgrationConfig()
 
-	err := s.actions.Run(s.inputFolder, s.outFolder)
+	err := s.actions.Run(s.inputFolder)
 	s.NoError(err)
 	s.FileExists(path.Join(s.outFolder, outputFileName))
 	s.FileExists(s.runOutputFile)

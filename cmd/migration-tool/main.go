@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/ChristophBe/migration-tool/pkg/actions"
+	"github.com/ChristophBe/migration-tool/pkg/execution_loggers"
 	"log"
 	"os"
 )
@@ -20,7 +21,7 @@ func main() {
 	}
 
 	folder := flag.String("folder", "migrations", "Folder where migrations.yaml and scripts are located")
-	outputFolder := flag.String("outFolder", "", "Folder where the output file will be stored")
+	outputFolder := flag.String("execution-filename", "execution-log.yaml", "File where the the executes steps are logged.")
 	flag.Parse()
 
 	if flag.NArg() < 1 {
@@ -30,12 +31,14 @@ func main() {
 
 	command := flag.Arg(0)
 
-	err := RunCommands(actions.New(), command, *folder, *outputFolder)
+	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(*outputFolder)
+
+	err := RunCommands(actions.New(fileExecutionLogger), command, *folder)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
-func RunCommands(act Actions, command, folder string, outputFolder string) (err error) {
+func RunCommands(act Actions, command, folder string) (err error) {
 
 	switch command {
 	case "recalculate-hashes":
@@ -52,7 +55,7 @@ func RunCommands(act Actions, command, folder string, outputFolder string) (err 
 			return fmt.Errorf("changes were detected during verification")
 		}
 	case "run":
-		if err = act.Run(folder, outputFolder); err != nil {
+		if err = act.Run(folder); err != nil {
 			return fmt.Errorf("error running migrations: %w", err)
 		}
 	case "help":

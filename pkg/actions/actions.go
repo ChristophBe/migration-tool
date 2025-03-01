@@ -1,8 +1,11 @@
 package actions
 
 type Actions struct {
+	executionLogger ExecutionLogger
 }
 
-func New() *Actions {
-	return new(Actions)
+func New(ExecutionLogger ExecutionLogger) *Actions {
+	return &Actions{
+		executionLogger: ExecutionLogger,
+	}
 }

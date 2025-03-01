@@ -14,7 +14,7 @@ const (
 	migrationFileName = "migrations.yaml"
 )
 
-func (a *Actions) Run(folder, outputFolder string) error {
+func (a *Actions) Run(folder string) error {
 	definition, err := loadMigrationDefinition(folder)
 	if err != nil {
 		return fmt.Errorf("error read step definition: %w", err)
@@ -27,7 +27,7 @@ func (a *Actions) Run(folder, outputFolder string) error {
 		return fmt.Errorf("aborting execution: One or more step files have changed")
 	}
 
-	results, err := loadResults(outputFolder)
+	results, err := a.executionLogger.LoadExecutionLog()
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (a *Actions) Run(folder, outputFolder string) error {
 		executedSteps = append(executedSteps, res)
 	}
 
-	err = updateResults(outputFolder, results, executedSteps)
+	err = a.executionLogger.LogExecution(executedSteps)
 	return nil
 }
 

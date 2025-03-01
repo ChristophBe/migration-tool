@@ -63,17 +63,17 @@ func (_c *Actions_RecalculateHashes_Call) RunAndReturn(run func(string) error) *
 	return _c
 }
 
-// Run provides a mock function with given fields: folder, outputFolder
-func (_m *Actions) Run(folder string, outputFolder string) error {
-	ret := _m.Called(folder, outputFolder)
+// Run provides a mock function with given fields: folder
+func (_m *Actions) Run(folder string) error {
+	ret := _m.Called(folder)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Run")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, string) error); ok {
-		r0 = rf(folder, outputFolder)
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(folder)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -88,14 +88,13 @@ type Actions_Run_Call struct {
 
 // Run is a helper method to define mock.On call
 //   - folder string
-//   - outputFolder string
-func (_e *Actions_Expecter) Run(folder interface{}, outputFolder interface{}) *Actions_Run_Call {
-	return &Actions_Run_Call{Call: _e.mock.On("Run", folder, outputFolder)}
+func (_e *Actions_Expecter) Run(folder interface{}) *Actions_Run_Call {
+	return &Actions_Run_Call{Call: _e.mock.On("Run", folder)}
 }
 
-func (_c *Actions_Run_Call) Run(run func(folder string, outputFolder string)) *Actions_Run_Call {
+func (_c *Actions_Run_Call) Run(run func(folder string)) *Actions_Run_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string))
+		run(args[0].(string))
 	})
 	return _c
 }
@@ -105,7 +104,7 @@ func (_c *Actions_Run_Call) Return(_a0 error) *Actions_Run_Call {
 	return _c
 }
 
-func (_c *Actions_Run_Call) RunAndReturn(run func(string, string) error) *Actions_Run_Call {
+func (_c *Actions_Run_Call) RunAndReturn(run func(string) error) *Actions_Run_Call {
 	_c.Call.Return(run)
 	return _c
 }

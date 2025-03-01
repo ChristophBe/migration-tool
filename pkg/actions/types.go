@@ -12,7 +12,7 @@ type MigrationDefinition struct {
 	Steps []MigrationStep `yaml:"steps"`
 }
 
-type Results struct {
+type ExecutionLogs struct {
 	Steps []StepResult `yaml:"steps"`
 }
 type StepResult struct {
