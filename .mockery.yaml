@@ -1,13 +1,18 @@
-with-expecter: true
-filename: "{{.InterfaceName}}.gen.go"
-dir: "internal/mocks/{{.PackageName}}_mocks"
-outpkg: "{{.PackageName}}_mocks"
-mockname: "{{.InterfaceName}}"
+with-expecter: True
+resolve-type-alias: False
+disable-version-string: True
+inpackage: True
+all: True
 
+filename: "{{.InterfaceName  | snakecase | lower }}_mock.gen.go"
+dir: "{{.InterfaceDir}}"
+outpkg: "{{.PackageName}}"
+mockname: "{{.InterfaceName}}Mock"
 
 packages:
-  github.com/ChristophBe/migration-tool/cmd/migration-tool:
-  github.com/ChristophBe/migration-tool/pkg/actions:
+  github.com/ChristophBe/migration-tool:
+    config:
+      recursive: True
 
 
 

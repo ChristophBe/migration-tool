@@ -12,14 +12,17 @@ import (
 
 type ActionRunTestSuite struct {
 	suite.Suite
-	inputFolder   string
-	outFolder     string
-	runOutputFile string
-	actions       *Actions
+	inputFolder         string
+	outFolder           string
+	runOutputFile       string
+	actions             *Actions
+	executionLoggerMock *ExecutionLoggerMock
 }
 
 func (s *ActionRunTestSuite) SetupTest() {
-	s.actions = new(Actions)
+
+	s.executionLoggerMock = NewExecutionLoggerMock(s.T())
+	s.actions = New(s.executionLoggerMock)
 
 	var err error
 	s.inputFolder, err = os.MkdirTemp("", "test-input")

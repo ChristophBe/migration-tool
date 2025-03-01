@@ -3,18 +3,17 @@ package main
 import (
 	"crypto/rand"
 	"errors"
-	"github.com/ChristophBe/migration-tool/internal/mocks/main_mocks"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 type RunCommandTestSuite struct {
 	suite.Suite
-	mockAction *main_mocks.Actions
+	mockAction *ActionsMock
 }
 
 func (s *RunCommandTestSuite) SetupTest() {
-	s.mockAction = main_mocks.NewActions(s.T())
+	s.mockAction = NewActionsMock(s.T())
 }
 
 func (s *RunCommandTestSuite) TestRun() {
