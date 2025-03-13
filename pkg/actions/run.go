@@ -15,7 +15,7 @@ const (
 )
 
 func (a *Actions) Run(folder string) error {
-	definition, err := loadMigrationDefinition(folder)
+	definition, err := a.loadMigrationDefinition(folder)
 	if err != nil {
 		return fmt.Errorf("error read step definition: %w", err)
 	}

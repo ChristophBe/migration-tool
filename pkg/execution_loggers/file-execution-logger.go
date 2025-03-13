@@ -2,29 +2,36 @@ package execution_loggers
 
 import (
 	"errors"
-	"github.com/ChristophBe/migration-tool/internal/utils"
 	"github.com/ChristophBe/migration-tool/pkg/actions"
 	"io/fs"
 )
 
-type FileExecutionLogger struct {
-	outputFilename string
+type ExecutionLogs = actions.ExecutionLogs
+type OutputFileReaderWriter interface {
+	Read(filename string) (ExecutionLogs, error)
+	Write(filename string, logs ExecutionLogs) error
 }
 
-func NewFileExecutionLogger(outputFilename string) *FileExecutionLogger {
+type FileExecutionLogger struct {
+	outputFilename         string
+	outputFileReaderWriter OutputFileReaderWriter
+}
+
+func NewFileExecutionLogger(outputFilename string, outputFileReaderWriter OutputFileReaderWriter) *FileExecutionLogger {
 	return &FileExecutionLogger{
-		outputFilename: outputFilename,
+		outputFilename:         outputFilename,
+		outputFileReaderWriter: outputFileReaderWriter,
 	}
 }
 
 func (f *FileExecutionLogger) LoadExecutionLog() (actions.ExecutionLogs, error) {
-	res, err := utils.LoadYaml[actions.ExecutionLogs](f.outputFilename)
+	res, err := f.outputFileReaderWriter.Read(f.outputFilename)
 
 	if errors.Is(err, fs.ErrNotExist) {
 		return actions.ExecutionLogs{}, nil
 	}
 
-	return *res, err
+	return res, err
 }
 
 func (f *FileExecutionLogger) LogExecution(steps []actions.StepResult) error {
@@ -33,5 +40,5 @@ func (f *FileExecutionLogger) LogExecution(steps []actions.StepResult) error {
 		return err
 	}
 	results.Steps = append(results.Steps, steps...)
-	return utils.SaveYaml[actions.ExecutionLogs](f.outputFilename, results)
+	return f.outputFileReaderWriter.Write(f.outputFilename, results)
 }

@@ -7,7 +7,7 @@ import (
 
 func (a *Actions) RecalculateHashes(folder string) error {
 
-	config, err := loadMigrationDefinition(folder)
+	config, err := a.loadMigrationDefinition(folder)
 	if err != nil {
 		return fmt.Errorf("error read migration definition: %w", err)
 	}
@@ -21,5 +21,5 @@ func (a *Actions) RecalculateHashes(folder string) error {
 		config.Steps[i].Hash = hash
 		prevHash = hash
 	}
-	return saveMigrationDefinition(folder, config)
+	return a.saveMigrationDefinition(folder, config)
 }

@@ -3,21 +3,19 @@ package actions
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
-	"github.com/ChristophBe/migration-tool/internal/utils"
-	"io/fs"
 	"os"
 	"path/filepath"
 )
 
-func saveMigrationDefinition(folder string, migrationDefinition *MigrationDefinition) error {
+func (a *Actions) saveMigrationDefinition(folder string, migrationDefinition MigrationDefinition) error {
 	file := filepath.Join(folder, migrationFileName)
-	return utils.SaveYaml(file, migrationDefinition)
+	return a.definitionReaderWriter.Write(file, migrationDefinition)
 }
-func loadMigrationDefinition(folder string) (*MigrationDefinition, error) {
+func (a *Actions) loadMigrationDefinition(folder string) (MigrationDefinition, error) {
 	file := filepath.Join(folder, migrationFileName)
-	return utils.LoadYaml[MigrationDefinition](file)
+
+	return a.definitionReaderWriter.Read(file)
 }
 
 func CalculateHash(filename string, prevHash string) (string, error) {
@@ -30,19 +28,4 @@ func CalculateHash(filename string, prevHash string) (string, error) {
 	hasher.Write([]byte(prevHash))
 	hash := hex.EncodeToString(hasher.Sum(nil))
 	return hash, nil
-}
-
-func updateResults(folder string, results *ExecutionLogs, steps []StepResult) error {
-	results.Steps = append(results.Steps, steps...)
-	return utils.SaveYaml(filepath.Join(folder, outputFileName), results)
-}
-
-func loadResults(folder string) (*ExecutionLogs, error) {
-	res, err := utils.LoadYaml[ExecutionLogs](filepath.Join(folder, outputFileName))
-
-	if errors.Is(err, fs.ErrNotExist) {
-		return &ExecutionLogs{}, nil
-	}
-
-	return res, err
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/ChristophBe/migration-tool/internal/utils"
 	"github.com/ChristophBe/migration-tool/pkg/actions"
 	"github.com/ChristophBe/migration-tool/pkg/execution_loggers"
 	"log"
@@ -31,9 +32,11 @@ func main() {
 
 	command := flag.Arg(0)
 
-	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(*outputFolder)
+	ouputfileReaderWriter := utils.NewYamlReaderWriter[execution_loggers.ExecutionLogs]()
+	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(*outputFolder, ouputfileReaderWriter)
+	definitionWriterReader := utils.NewYamlReaderWriter[actions.MigrationDefinition]()
 
-	err := RunCommands(actions.New(fileExecutionLogger), command, *folder)
+	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader), command, *folder)
 	if err != nil {
 		log.Fatal(err)
 	}
