@@ -34,7 +34,7 @@ func (s *RunCommandTestSuite) TestRun() {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
 			s.mockAction.EXPECT().Run(expectedFolder).Return(tc.err)
-			err := RunCommands(s.mockAction, "run", expectedFolder)
+			err := RunCommands(s.mockAction, "run", expectedFolder, "")
 			s.ErrorIs(err, tc.err)
 
 		})
@@ -69,7 +69,7 @@ func (s *RunCommandTestSuite) TestVerify() {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
 			s.mockAction.EXPECT().Verify(expectedFolder).Return(tc.changesDetected, tc.err)
-			err := RunCommands(s.mockAction, "verify", expectedFolder)
+			err := RunCommands(s.mockAction, "verify", expectedFolder, "")
 			if tc.changesDetected && tc.err == nil {
 				s.Error(err)
 			} else {
@@ -96,7 +96,33 @@ func (s *RunCommandTestSuite) TestRecalculateHashes() {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
 			s.mockAction.EXPECT().RecalculateHashes(expectedFolder).Return(tc.err)
-			err := RunCommands(s.mockAction, "recalculate-hashes", expectedFolder)
+			err := RunCommands(s.mockAction, "recalculate-hashes", expectedFolder, "")
+
+			s.ErrorIs(err, tc.err)
+
+		})
+	}
+}
+func (s *RunCommandTestSuite) TestAddStepFile() {
+
+	tt := []struct {
+		name string
+		err  error
+	}{
+		{
+			name: "no error",
+		},
+		{
+			name: "with error",
+			err:  errors.New(rand.Text()),
+		},
+	}
+	for _, tc := range tt {
+		s.Run(tc.name, func() {
+			expectedFolder := rand.Text()
+			expectedFilename := rand.Text()
+			s.mockAction.EXPECT().AddStepFile(expectedFolder, expectedFilename).Return(tc.err)
+			err := RunCommands(s.mockAction, "add", expectedFolder, expectedFilename)
 
 			s.ErrorIs(err, tc.err)
 

@@ -14,9 +14,10 @@ func main() {
 	flag.Usage = func() {
 		fmt.Println("Usage: migration-tool [options] <command>")
 		fmt.Println("Commands:")
+		fmt.Println("  run                  Run the migrations")
 		fmt.Println("  recalculate-hashes   Recalculate migration hashes")
 		fmt.Println("  verify               Verify if migration files have changed")
-		fmt.Println("  run                  Run the migrations")
+		fmt.Println("  add <filename>       Add a new Step script file.")
 		fmt.Println("Options:")
 		flag.PrintDefaults()
 	}
@@ -36,12 +37,12 @@ func main() {
 	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(*outputFolder, ouputfileReaderWriter)
 	definitionWriterReader := utils.NewYamlReaderWriter[actions.MigrationDefinition]()
 
-	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader), command, *folder)
+	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader), command, *folder, flag.Arg(1))
 	if err != nil {
 		log.Fatal(err)
 	}
 }
-func RunCommands(act Actions, command, folder string) (err error) {
+func RunCommands(act Actions, command, folder string, filename string) (err error) {
 
 	switch command {
 	case "recalculate-hashes":
@@ -61,6 +62,11 @@ func RunCommands(act Actions, command, folder string) (err error) {
 		if err = act.Run(folder); err != nil {
 			return fmt.Errorf("error running migrations: %w", err)
 		}
+	case "add":
+		if err = act.AddStepFile(folder, filename); err != nil {
+			return fmt.Errorf("error running migrations: %w", err)
+		}
+
 	case "help":
 		flag.Usage()
 
