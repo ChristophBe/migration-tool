@@ -33,9 +33,8 @@ func (s *RunCommandTestSuite) TestRun() {
 	for _, tc := range tt {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
-			expectedOutPutFolder := rand.Text()
-			s.mockAction.EXPECT().Run(expectedFolder, expectedOutPutFolder).Return(tc.err)
-			err := RunCommands(s.mockAction, "run", expectedFolder, expectedOutPutFolder)
+			s.mockAction.EXPECT().Run(expectedFolder).Return(tc.err)
+			err := RunCommands(s.mockAction, "run", expectedFolder)
 			s.ErrorIs(err, tc.err)
 
 		})
@@ -70,7 +69,7 @@ func (s *RunCommandTestSuite) TestVerify() {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
 			s.mockAction.EXPECT().Verify(expectedFolder).Return(tc.changesDetected, tc.err)
-			err := RunCommands(s.mockAction, "verify", expectedFolder, rand.Text())
+			err := RunCommands(s.mockAction, "verify", expectedFolder)
 			if tc.changesDetected && tc.err == nil {
 				s.Error(err)
 			} else {
@@ -97,7 +96,7 @@ func (s *RunCommandTestSuite) TestRecalculateHashes() {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
 			s.mockAction.EXPECT().RecalculateHashes(expectedFolder).Return(tc.err)
-			err := RunCommands(s.mockAction, "recalculate-hashes", expectedFolder, rand.Text())
+			err := RunCommands(s.mockAction, "recalculate-hashes", expectedFolder)
 
 			s.ErrorIs(err, tc.err)
 

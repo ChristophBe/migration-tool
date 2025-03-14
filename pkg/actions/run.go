@@ -2,7 +2,6 @@ package actions
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -10,7 +9,6 @@ import (
 )
 
 const (
-	outputFileName    = "output.yaml"
 	migrationFileName = "migrations.yaml"
 )
 
@@ -57,6 +55,10 @@ func (a *Actions) Run(folder string) error {
 	}
 
 	err = a.executionLogger.LogExecution(executedSteps)
+
+	if err != nil {
+		return fmt.Errorf("failed to log execution steps: %w", err)
+	}
 	return nil
 }
 
@@ -76,10 +78,10 @@ func executeMigrationStep(folder string, step MigrationStep) (res StepResult, er
 	defer tmpFile.Close()
 	defer os.Remove(tmpFile.Name())
 
-	if _, err = io.WriteString(tmpFile, string(scriptContent)); err != nil {
+	if _, err = tmpFile.Write(scriptContent); err != nil {
 		return
-
 	}
+
 	err = tmpFile.Chmod(0755)
 	if err != nil {
 		return

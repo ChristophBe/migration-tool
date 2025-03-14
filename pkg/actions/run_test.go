@@ -55,6 +55,7 @@ echo "` + runOutput + `" >> ` + s.runOutputFile + `
 		err := os.WriteFile(scriptFilepath, []byte(content), 0644)
 		s.NoError(err)
 		lastHash, err = CalculateHash(scriptFilepath, lastHash)
+		s.NoError(err)
 		migrationDefinition.Steps = append(migrationDefinition.Steps, MigrationStep{
 			Filename:    filename,
 			Description: "step " + strconv.Itoa(i),
