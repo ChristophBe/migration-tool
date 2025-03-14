@@ -20,6 +20,7 @@ To ensure consistency, the scripts are checked for unexecuted changes.
 
 ### SEE ALSO
 
+* [migration-tool add](migration-tool_add.md)	 - Add a file to the migration definition.
 * [migration-tool regenerate-hashes](migration-tool_regenerate-hashes.md)	 - This command recalculates the hashes of the scripts.
 * [migration-tool run](migration-tool_run.md)	 - Runs every script that were not previously executed.
 * [migration-tool verify](migration-tool_verify.md)	 - Verify checks if the scripts have changed.
