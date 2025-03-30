@@ -14,7 +14,7 @@ func (a *Actions) RecalculateHashes(folder string) error {
 	prevHash := ""
 	for i, migration := range config.Steps {
 		scriptPath := filepath.Join(folder, migration.Filename)
-		hash, err := CalculateHash(scriptPath, prevHash)
+		hash, err := a.hashFunction.CalculateHash(scriptPath, prevHash)
 		if err != nil {
 			return err
 		}

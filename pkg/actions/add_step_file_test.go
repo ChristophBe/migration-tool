@@ -14,12 +14,14 @@ type AddStepFileTestSuite struct {
 	actions                    *Actions
 	definitionReaderWriterMock *MigrationDefinitionReaderWriterMock
 	executionLoggerMock        *ExecutionLoggerMock
+	hashFunctionMock           *HashFunctionMock
 }
 
 func (s *AddStepFileTestSuite) SetupTest() {
 	s.executionLoggerMock = NewExecutionLoggerMock(s.T())
 	s.definitionReaderWriterMock = NewMigrationDefinitionReaderWriterMock(s.T())
-	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock)
+	s.hashFunctionMock = NewHashFunctionMock(s.T())
+	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, s.hashFunctionMock)
 }
 
 func (s *AddStepFileTestSuite) TestAddStepFile() {
@@ -47,7 +49,8 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 
 	expectedResultDefinition := MigrationDefinition{}
 
-	expectedHash, err := CalculateHash(tmpFile.Name(), initialDefinition.Steps[0].Hash)
+	expectedHash := rand.Text()
+	s.hashFunctionMock.EXPECT().CalculateHash(tmpFile.Name(), initialDefinition.Steps[0].Hash).Return(expectedHash, nil)
 	s.NoError(err)
 	expectedResultDefinition.Steps = append(initialDefinition.Steps, MigrationStep{
 		Filename: expectedFileName,

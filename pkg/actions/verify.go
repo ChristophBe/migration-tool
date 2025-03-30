@@ -11,15 +11,15 @@ func (a *Actions) Verify(folder string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("error read migration definition: %w", err)
 	}
-	return verifyDefinition(folder, migrationDefinition)
+	return a.verifyDefinition(folder, migrationDefinition)
 }
 
-func verifyDefinition(folder string, migrationDefinition MigrationDefinition) (bool, error) {
+func (a *Actions) verifyDefinition(folder string, migrationDefinition MigrationDefinition) (bool, error) {
 	prevHash := ""
 	changed := false
 	for _, migration := range migrationDefinition.Steps {
 		scriptPath := filepath.Join(folder, migration.Filename)
-		hash, err := CalculateHash(scriptPath, prevHash)
+		hash, err := a.hashFunction.CalculateHash(scriptPath, prevHash)
 		if err != nil {
 			return false, err
 		}

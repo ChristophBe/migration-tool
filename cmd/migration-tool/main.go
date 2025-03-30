@@ -36,8 +36,9 @@ func main() {
 	ouputfileReaderWriter := utils.NewYamlReaderWriter[execution_loggers.ExecutionLogs]()
 	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(*outputFolder, ouputfileReaderWriter)
 	definitionWriterReader := utils.NewYamlReaderWriter[actions.MigrationDefinition]()
+	hashFunction := utils.NewHashFunction()
 
-	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader), command, *folder, flag.Arg(1))
+	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader, hashFunction), command, *folder, flag.Arg(1))
 	if err != nil {
 		log.Fatal(err)
 	}

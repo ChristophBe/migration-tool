@@ -13,7 +13,7 @@ func (a *Actions) AddStepFile(folder, filename string) error {
 
 	lastHash := migrationDefinition.Steps[len(migrationDefinition.Steps)-1].Hash
 
-	newHash, err := CalculateHash(path.Join(folder, filename), lastHash)
+	newHash, err := a.hashFunction.CalculateHash(path.Join(folder, filename), lastHash)
 
 	if err != nil {
 		return err

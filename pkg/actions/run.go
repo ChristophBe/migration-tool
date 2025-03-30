@@ -17,7 +17,7 @@ func (a *Actions) Run(folder string) error {
 	if err != nil {
 		return fmt.Errorf("error read step definition: %w", err)
 	}
-	changed, err := verifyDefinition(folder, definition)
+	changed, err := a.verifyDefinition(folder, definition)
 	if err != nil {
 		return fmt.Errorf("error verifying migrations before execution: %w", err)
 	}
