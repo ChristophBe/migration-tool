@@ -3,11 +3,13 @@ package actions
 type Actions struct {
 	executionLogger        ExecutionLogger
 	definitionReaderWriter MigrationDefinitionReaderWriter
+	hashFunction           HashFunction
 }
 
-func New(ExecutionLogger ExecutionLogger, DefinitionReaderWriter MigrationDefinitionReaderWriter) *Actions {
+func New(executionLogger ExecutionLogger, definitionReaderWriter MigrationDefinitionReaderWriter, hashFunction HashFunction) *Actions {
 	return &Actions{
-		executionLogger:        ExecutionLogger,
-		definitionReaderWriter: DefinitionReaderWriter,
+		executionLogger:        executionLogger,
+		definitionReaderWriter: definitionReaderWriter,
+		hashFunction:           hashFunction,
 	}
 }

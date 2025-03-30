@@ -19,13 +19,15 @@ type ActionRunTestSuite struct {
 	actions                    *Actions
 	executionLoggerMock        *ExecutionLoggerMock
 	definitionReaderWriterMock *MigrationDefinitionReaderWriterMock
+	hashFunctionMock           *HashFunctionMock
 }
 
 func (s *ActionRunTestSuite) SetupTest() {
 
 	s.executionLoggerMock = NewExecutionLoggerMock(s.T())
 	s.definitionReaderWriterMock = NewMigrationDefinitionReaderWriterMock(s.T())
-	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock)
+	s.hashFunctionMock = NewHashFunctionMock(s.T())
+	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, s.hashFunctionMock)
 
 	var err error
 	s.inputFolder, err = os.MkdirTemp("", "test-input")
@@ -41,9 +43,9 @@ func (s *ActionRunTestSuite) addMirgrationConfig() (MigrationDefinition, string)
 	migrationDefinition := MigrationDefinition{}
 	var expectedOutput string
 
-	lastHash := ""
+	previousHash := ""
 	for i := 0; i < 2; i++ {
-		filename := rand.Text() + ".sh"
+		filename := fmt.Sprintf("step-%d-%s.sh", i, rand.Text())
 
 		runOutput := fmt.Sprintf("step-%d-%s", i, rand.Text())
 		expectedOutput = fmt.Sprintf("%s%s\n", expectedOutput, runOutput)
@@ -54,13 +56,15 @@ echo "` + runOutput + `" >> ` + s.runOutputFile + `
 		scriptFilepath := path.Join(s.inputFolder, filename)
 		err := os.WriteFile(scriptFilepath, []byte(content), 0644)
 		s.NoError(err)
-		lastHash, err = CalculateHash(scriptFilepath, lastHash)
-		s.NoError(err)
+		currentHash := rand.Text()
+
+		s.hashFunctionMock.EXPECT().CalculateHash(scriptFilepath, previousHash).Return(currentHash, nil)
 		migrationDefinition.Steps = append(migrationDefinition.Steps, MigrationStep{
 			Filename:    filename,
 			Description: "step " + strconv.Itoa(i),
-			Hash:        lastHash,
+			Hash:        currentHash,
 		})
+		previousHash = currentHash
 
 	}
 

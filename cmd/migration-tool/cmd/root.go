@@ -47,8 +47,9 @@ func init() {
 	outfileReaderWriter := utils.NewYamlReaderWriter[execution_loggers.ExecutionLogs]()
 	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(executionLogFile, outfileReaderWriter)
 	definitionWriterReader := utils.NewYamlReaderWriter[actions.MigrationDefinition]()
+	hashFunction := utils.NewHashFunction()
 
-	acts = actions.New(fileExecutionLogger, definitionWriterReader)
+	acts = actions.New(fileExecutionLogger, definitionWriterReader, hashFunction)
 }
 
 func GenerateDoc(folder string) error {
