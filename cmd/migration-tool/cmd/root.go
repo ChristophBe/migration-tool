@@ -8,6 +8,7 @@ import (
 	"github.com/ChristophBe/migration-tool/internal/utils"
 	"github.com/ChristophBe/migration-tool/pkg/actions"
 	"github.com/ChristophBe/migration-tool/pkg/execution_loggers"
+	"github.com/ChristophBe/migration-tool/pkg/verifiers"
 	"github.com/spf13/cobra/doc"
 	"os"
 
@@ -48,8 +49,9 @@ func init() {
 	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(executionLogFile, outfileReaderWriter)
 	definitionWriterReader := utils.NewYamlReaderWriter[actions.MigrationDefinition]()
 	hashFunction := utils.NewHashFunction()
+	definitionVerifier := verifiers.NewModelDefinitionVerifier(hashFunction)
 
-	acts = actions.New(fileExecutionLogger, definitionWriterReader, hashFunction)
+	acts = actions.New(fileExecutionLogger, definitionWriterReader, definitionVerifier, hashFunction)
 }
 
 func GenerateDoc(folder string) error {
