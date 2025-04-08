@@ -6,6 +6,7 @@ import (
 	"github.com/ChristophBe/migration-tool/internal/utils"
 	"github.com/ChristophBe/migration-tool/pkg/actions"
 	"github.com/ChristophBe/migration-tool/pkg/execution_loggers"
+	"github.com/ChristophBe/migration-tool/pkg/verifiers"
 	"log"
 	"os"
 )
@@ -37,8 +38,9 @@ func main() {
 	fileExecutionLogger := execution_loggers.NewFileExecutionLogger(*outputFolder, ouputfileReaderWriter)
 	definitionWriterReader := utils.NewYamlReaderWriter[actions.MigrationDefinition]()
 	hashFunction := utils.NewHashFunction()
+	definitionVerifier := verifiers.NewModelDefinitionVerifier(hashFunction)
 
-	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader, hashFunction), command, *folder, flag.Arg(1))
+	err := RunCommands(actions.New(fileExecutionLogger, definitionWriterReader, definitionVerifier, hashFunction), command, *folder, flag.Arg(1))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,12 +53,12 @@ func RunCommands(act Actions, command, folder string, filename string) (err erro
 			return fmt.Errorf("error recalculating hashes: %w", err)
 		}
 	case "verify":
-		var changesDetected bool
-		if changesDetected, err = act.Verify(folder); err != nil {
+		var ok bool
+		if ok, err = act.Verify(folder); err != nil {
 			return fmt.Errorf("error verifying migrations: %w", err)
 		}
 
-		if changesDetected {
+		if !ok {
 			return fmt.Errorf("changes were detected during verification")
 		}
 	case "run":

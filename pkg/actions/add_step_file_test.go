@@ -23,7 +23,7 @@ func (s *AddStepFileTestSuite) SetupTest() {
 	s.executionLoggerMock = NewExecutionLoggerMock(s.T())
 	s.definitionReaderWriterMock = NewMigrationDefinitionReaderWriterMock(s.T())
 	s.hashFunctionMock = NewHashFunctionMock(s.T())
-	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, s.hashFunctionMock)
+	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, nil, s.hashFunctionMock)
 }
 
 func (s *AddStepFileTestSuite) TestAddStepFile() {

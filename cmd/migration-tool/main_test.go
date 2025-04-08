@@ -68,7 +68,7 @@ func (s *RunCommandTestSuite) TestVerify() {
 	for _, tc := range tt {
 		s.Run(tc.name, func() {
 			expectedFolder := rand.Text()
-			s.mockAction.EXPECT().Verify(expectedFolder).Return(tc.changesDetected, tc.err)
+			s.mockAction.EXPECT().Verify(expectedFolder).Return(!tc.changesDetected, tc.err)
 			err := RunCommands(s.mockAction, "verify", expectedFolder, "")
 			if tc.changesDetected && tc.err == nil {
 				s.Error(err)
