@@ -7,7 +7,7 @@ With the migration tool steps that are based of bash scripts can be defined and 
 
 ## Run with Docker
 ```bash
-docker run -v ./examples/migrations:/migrations ghcr.io/christophbe/migration-tool:latest run
+docker run -v ./examples/migrations:/migrations -v ./output:/output ghcr.io/christophbe/migration-tool:latest -execution-filename ./output/execution-log.yaml run
 ```
 
 
