@@ -17,13 +17,15 @@ type AddStepFileTestSuite struct {
 	definitionReaderWriterMock *MigrationDefinitionReaderWriterMock
 	executionLoggerMock        *ExecutionLoggerMock
 	hashFunctionMock           *HashFunctionMock
+	definitionVerifierMock     *MigrationDefinitionVerifierMock
 }
 
 func (s *AddStepFileTestSuite) SetupTest() {
 	s.executionLoggerMock = NewExecutionLoggerMock(s.T())
 	s.definitionReaderWriterMock = NewMigrationDefinitionReaderWriterMock(s.T())
 	s.hashFunctionMock = NewHashFunctionMock(s.T())
-	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, nil, s.hashFunctionMock)
+	s.definitionVerifierMock = NewMigrationDefinitionVerifierMock(s.T())
+	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, s.definitionVerifierMock, s.hashFunctionMock)
 }
 
 func (s *AddStepFileTestSuite) TestAddStepFile() {
@@ -33,21 +35,40 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 		readMigrationError             error
 		hashCalculationError           error
 		writeMirgrationDefinitionError error
+		verificationResult             bool
+		verificationError              error
 	}{
 		{
-			name: "no_error",
+			name:               "no_error",
+			verificationResult: true,
 		},
 		{
 			name:               "read_migration_failed",
 			readMigrationError: errors.New(rand.Text()),
+			verificationResult: true,
 		},
 		{
 			name:                 "hash_calculation_failed",
 			hashCalculationError: errors.New(rand.Text()),
+			verificationResult:   true,
 		},
 		{
 			name:                           "write_migration_failed",
 			writeMirgrationDefinitionError: errors.New(rand.Text()),
+			verificationResult:             true,
+		},
+		{
+			name:                           "write_migration_failed",
+			writeMirgrationDefinitionError: errors.New(rand.Text()),
+			verificationResult:             true,
+		},
+		{
+			name:              "definition_verification_failed",
+			verificationError: errors.New(rand.Text()),
+		},
+		{
+			name:               "definition_invalid",
+			verificationResult: false,
 		},
 	}
 
@@ -74,13 +95,20 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 				},
 			}
 
-			expectedError := utils.GetNotNilError(tc.readMigrationError, tc.hashCalculationError, tc.writeMirgrationDefinitionError)
-			isErrorTestCase := expectedError != nil
+			expectedError := utils.GetNotNilError(tc.readMigrationError, tc.hashCalculationError, tc.writeMirgrationDefinitionError, tc.verificationError)
+
+			isErrorTestCase := expectedError != nil || !tc.verificationResult
 
 			expectedDefinitionFileName := path.Join(folder, migrationFileName)
 
 			readCall := s.definitionReaderWriterMock.EXPECT().Read(expectedDefinitionFileName).Return(initialDefinition, tc.readMigrationError)
 			defer readCall.Unset()
+
+			verifierCall := s.definitionVerifierMock.EXPECT().Verify(folder, initialDefinition).Return(tc.verificationResult, tc.verificationError)
+			defer verifierCall.Unset()
+			if isErrorTestCase {
+				verifierCall.Maybe()
+			}
 
 			expectedHash := rand.Text()
 			calculateHashCall := s.hashFunctionMock.EXPECT().CalculateHash(tmpFile.Name(), initialDefinition.Steps[0].Hash).Return(expectedHash, tc.hashCalculationError)
@@ -102,10 +130,13 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 
 			err = s.actions.AddStepFile(folder, expectedFileName)
 
-			if isErrorTestCase {
+			if isErrorTestCase && tc.verificationResult {
 				s.Require().ErrorIs(err, expectedError)
+			} else if !tc.verificationResult {
+				var invalidModelDefinitionError InvalidModelDefinitionError
+				s.Require().ErrorAs(err, &invalidModelDefinitionError)
 			} else {
-				s.NoError(err)
+				s.Require().NoError(err)
 			}
 		})
 	}
