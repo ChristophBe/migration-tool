@@ -2,8 +2,8 @@ steps:
 - filename: 001_first_step.sh
   description: |
     Execute step one of the migrations.
-  hash: 8ccd4a75a9d6113721d84220abaa2055bfdad628ba0038795d4bee0b56e3a25c
+  hash: 3edb9484a9a8ce76471bd79c0aa76f301124636bd442167a67d3a3587554b342
 - filename: 002_second_step.sh
   description: |
     Execute step two of the migrations.
-  hash: a09ba83292977e67375b5e4e06e03089e26cbd1a602d055858146df3d38c71e6
+  hash: b6528897116e948e30cc0e9c77d2bac9ed3309b8c62882a3125ecdadaa06662a
