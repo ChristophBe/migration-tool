@@ -1,4 +1,4 @@
-package main
+package cmd
 
 type Actions interface {
 	Run(folder string) error

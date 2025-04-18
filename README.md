@@ -5,31 +5,11 @@ With the migration tool steps that are based of bash scripts can be defined and 
 
 # Usage
 
+The documentation of the Available commands and flags can be found [here](docs/cli/migration-tool.md).
+
 ## Run with Docker
 ```bash
 docker run -v ./examples/migrations:/migrations -v ./output:/output ghcr.io/christophbe/migration-tool:latest -execution-filename ./output/execution-log.yaml run
-```
-
-
-## Commands
-### Run Migrations
-Run all migration steps, that were not executed before.
-```bash
-migration-tool run -folder migrations
-```
-
-If any migration file has changed, execution will be aborted to prevent inconsistency.
-
-### Recalculate Hashes
-Recalculate the hashes of migration scripts and update `migrations.yaml`.
-```bash
-migration-tool recalculate-hashes -folder migrations
-```
-
-### Verify Migrations
-Check if any migration files have changed based on stored hashes.
-```bash
-migration-tool verify -folder migrations
 ```
 
 ## Migrations File
@@ -53,7 +33,8 @@ migrations:
 1. Clone this Repository
 2. Install needed development tooling.
    - [Golang CLI](https://go.dev/dl) Version 1.24 or later
-   - (optional) [mockery](https://vektra.github.io/mockery/latest/installation/) for generation of mocks
+   - [mockery](https://vektra.github.io/mockery/latest/installation/) for generation of mocks
+   - (optional) [cobra-cli](https://github.com/spf13/cobra/tree/main?tab=readme-ov-file#usage) cobra-cli for generation code for new command
 
 ## Run and Build 
 ### Run from Code 
@@ -73,6 +54,7 @@ go test ./...
 
 ## Generate Code
 For testing mock implementations of interfaces are used. To generate the mocks [mockery](https://vektra.github.io/mockery/latest/) is used.
+In addition to mock the documentation, for usage of the CLIs also gets generated.
 
 To run regenerate the generated files run the following command:
 ```bash
