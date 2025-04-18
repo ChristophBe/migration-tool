@@ -1,21 +1,19 @@
-## migration-tool run
+## migration-tool verify
 
-Runs every script that were not previously executed.
+Verify checks if the scripts have changed.
 
 ### Synopsis
 
-Runs every script that were not previously executed.
-Before running the scripts, the scripts are checked for unexecuted changes. 
-In case of unexecuted changes, the script is not executed.
+With verify, the scripts are checked for unexecuted changes.
 
 ```
-migration-tool run [flags]
+migration-tool verify [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for run
+  -h, --help   help for verify
 ```
 
 ### Options inherited from parent commands

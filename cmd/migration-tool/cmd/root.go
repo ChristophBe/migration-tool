@@ -39,5 +39,6 @@ func init() {
 }
 
 func GenerateDoc(folder string) error {
+	rootCmd.DisableAutoGenTag = true
 	return doc.GenMarkdownTree(rootCmd, folder)
 }
