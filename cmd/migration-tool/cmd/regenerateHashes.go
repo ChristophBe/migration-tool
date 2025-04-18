@@ -18,9 +18,8 @@ Be careful, this can lead to consistent behavior while executing the scripts. It
 It is recommended that this is only used to recalculate the hashes for scripts that were not executed in any environment before.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		act := initActions(executionLogFile)
-
-		err := act.RecalculateHashes(baseFolder)
+		fmt.Println("Recalculating hashes...")
+		err := acts.RecalculateHashes(baseFolder)
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
 			os.Exit(1)

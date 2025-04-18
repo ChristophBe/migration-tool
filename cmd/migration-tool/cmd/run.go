@@ -17,9 +17,7 @@ var runCmd = &cobra.Command{
 Before running the scripts, the scripts are checked for unexecuted changes. 
 In case of unexecuted changes, the script is not executed.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		act := initActions(executionLogFile)
-		err := act.Run(baseFolder)
+		err := acts.Run(baseFolder)
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
 			os.Exit(1)
