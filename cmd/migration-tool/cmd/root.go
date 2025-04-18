@@ -4,6 +4,7 @@ Copyright © 2025 Christoph Becker <post@christopb.de>
 package cmd
 
 import (
+	"fmt"
 	"github.com/ChristophBe/migration-tool/internal/utils"
 	"github.com/ChristophBe/migration-tool/pkg/actions"
 	"github.com/ChristophBe/migration-tool/pkg/execution_loggers"
@@ -34,6 +35,7 @@ To ensure consistency, the scripts are checked for unexecuted changes.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
+		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
 }
