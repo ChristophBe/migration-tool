@@ -1,5 +1,5 @@
 /.idea/
 /*.iml
 **/execution-log.yaml
-./migration-tool
-./migration-tool.exe
+/migration-tool
+/migration-tool.exe
