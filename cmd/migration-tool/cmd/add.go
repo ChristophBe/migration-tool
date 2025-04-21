@@ -4,7 +4,12 @@ Copyright © 2025 Christoph Becker <post@christopb.de>
 package cmd
 
 import (
+	"errors"
+	"fmt"
 	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 // addCmd represents the add command
@@ -12,13 +17,48 @@ var addCmd = &cobra.Command{
 	Use:   "add [filename]",
 	Short: "Add a file to the migration definition.",
 	Long:  `Add a file to the migration definition. The file will be added to the end of the migration definition.`,
+	Args: func(cmd *cobra.Command, args []string) error {
+
+		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+			return err
+		}
+
+		filename := args[0]
+
+		absPath, err := filepath.Abs(filename)
+		if err != nil {
+			return fmt.Errorf("failed to resolve absolute path: %w", err)
+		}
+
+		if _, err := os.Stat(absPath); err != nil {
+			return fmt.Errorf("file does not exist: %w", err)
+		}
+
+		baseFolderAbs, err := filepath.Abs(baseFolder)
+		if err != nil {
+			return fmt.Errorf("failed to resolve base folder path: %w", err)
+		}
+
+		if !strings.HasPrefix(absPath, baseFolderAbs) {
+			return fmt.Errorf("file must be inside the base folder")
+		}
+
+		_, err = os.Stat(filename)
+		if err != nil && errors.Is(err, os.ErrNotExist) {
+			return err
+		} else if err != nil {
+			return fmt.Errorf("failed to stat file: %w", err)
+		}
+
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return acts.AddStepFile(baseFolder, args[0])
 	},
 }
 
 func init() {
-	addCmd.Args = cobra.ExactArgs(1)
+
 	rootCmd.AddCommand(addCmd)
 
 	// Here you will define your flags and configuration settings.
