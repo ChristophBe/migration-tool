@@ -33,15 +33,38 @@ func (s *AddCommandTestSuite) TearDownTest() {
 
 func (s *AddCommandTestSuite) TestSuccessfulRun() {
 
-	filePath := s.addTestFile(s.expectedFolder)
+	tt := []struct {
+		name              string
+		description       string
+		descriptionNotSet bool
+	}{
+		{
+			name:        "description",
+			description: rand.Text(),
+		},
+		{
+			name:        "emptyDescription",
+			description: "",
+		},
+	}
 
-	rootCmd.SetArgs([]string{"add", filePath})
+	for _, tc := range tt {
+		s.Run(tc.name, func() {
+			filePath := s.addTestFile(s.expectedFolder)
 
-	s.actionsMock.EXPECT().AddStepFile(s.expectedFolder, filePath).Return(nil)
+			rootCmd.SetArgs([]string{"add", filePath})
 
-	err := rootCmd.Execute()
+			err := addCmd.Flags().Set(descriptionFlag, tc.description)
+			s.Require().NoError(err)
 
-	s.NoError(err)
+			s.actionsMock.EXPECT().AddStepFile(s.expectedFolder, filePath, tc.description).Return(nil)
+
+			err = rootCmd.Execute()
+
+			s.NoError(err)
+
+		})
+	}
 }
 
 func (s *AddCommandTestSuite) addTestFile(dir string) string {
@@ -58,7 +81,7 @@ func (s *AddCommandTestSuite) TestAddError() {
 	expectedFile := s.addTestFile(s.expectedFolder)
 	rootCmd.SetArgs([]string{"add", expectedFile})
 
-	s.actionsMock.EXPECT().AddStepFile(s.expectedFolder, expectedFile).Return(nil)
+	s.actionsMock.EXPECT().AddStepFile(s.expectedFolder, expectedFile, "").Return(nil)
 
 	err := rootCmd.Execute()
 

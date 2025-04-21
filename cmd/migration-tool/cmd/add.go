@@ -8,6 +8,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const descriptionFlag = "description"
+const descriptionFlagShort = "d"
+
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add [filename]",
@@ -33,12 +36,18 @@ Only files in the same folder as the migration.yaml file or in a subfolder of th
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return acts.AddStepFile(baseFolder, args[0])
+
+		description, err := cmd.Flags().GetString(descriptionFlag)
+		if err != nil {
+			return err
+		}
+		return acts.AddStepFile(baseFolder, args[0], description)
 	},
 }
 
 func init() {
 
+	addCmd.Flags().StringP(descriptionFlag, descriptionFlagShort, "", "Description of the step")
 	rootCmd.AddCommand(addCmd)
 
 	// Here you will define your flags and configuration settings.

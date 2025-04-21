@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-func (a *Actions) AddStepFile(folder, filename string) error {
+func (a *Actions) AddStepFile(folder, filename string, description string) error {
 
 	definitionFile := path.Join(folder, migrationFileName)
 	migrationDefinition, err := a.definitionReaderWriter.Read(definitionFile)
@@ -35,8 +35,9 @@ func (a *Actions) AddStepFile(folder, filename string) error {
 	}
 
 	migrationDefinition.Steps = append(migrationDefinition.Steps, MigrationStep{
-		Filename: relativePath,
-		Hash:     newHash,
+		Filename:    relativePath,
+		Hash:        newHash,
+		Description: description,
 	})
 
 	err = a.definitionReaderWriter.Write(definitionFile, migrationDefinition)

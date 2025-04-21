@@ -117,10 +117,13 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 				calculateHashCall.Maybe()
 			}
 
+			expectedDescription := rand.Text()
+
 			expectedResultDefinition := MigrationDefinition{}
 			expectedResultDefinition.Steps = append(initialDefinition.Steps, MigrationStep{
-				Filename: expectedFileName,
-				Hash:     expectedHash,
+				Filename:    expectedFileName,
+				Hash:        expectedHash,
+				Description: expectedDescription,
 			})
 
 			writeCall := s.definitionReaderWriterMock.EXPECT().Write(expectedDefinitionFileName, expectedResultDefinition).Return(tc.writeMirgrationDefinitionError)
@@ -128,7 +131,7 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 				writeCall.Maybe()
 			}
 
-			err = s.actions.AddStepFile(folder, tmpFile.Name())
+			err = s.actions.AddStepFile(folder, tmpFile.Name(), expectedDescription)
 
 			if isErrorTestCase && tc.verificationResult {
 				s.Require().ErrorIs(err, expectedError)

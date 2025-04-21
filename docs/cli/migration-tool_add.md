@@ -5,6 +5,7 @@ Add a file to the migration definition.
 ### Synopsis
 
 Add a file to the migration definition. The file will be added to the end of the migration definition.
+Only files in the same folder as the migration.yaml file or in a subfolder of this folder can be added.
 
 ```
 migration-tool add [filename] [flags]
@@ -13,7 +14,8 @@ migration-tool add [filename] [flags]
 ### Options
 
 ```
-  -h, --help   help for add
+  -d, --description string   Description of the step
+  -h, --help                 help for add
 ```
 
 ### Options inherited from parent commands
