@@ -19,13 +19,17 @@ type ActionRunTestSuite struct {
 	actions                    *Actions
 	executionLoggerMock        *ExecutionLoggerMock
 	definitionReaderWriterMock *MigrationDefinitionReaderWriterMock
+	hashFunctionMock           *HashFunctionMock
+	definitionVerifierMock     *MigrationDefinitionVerifierMock
 }
 
 func (s *ActionRunTestSuite) SetupTest() {
 
 	s.executionLoggerMock = NewExecutionLoggerMock(s.T())
 	s.definitionReaderWriterMock = NewMigrationDefinitionReaderWriterMock(s.T())
-	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock)
+	s.hashFunctionMock = NewHashFunctionMock(s.T())
+	s.definitionVerifierMock = NewMigrationDefinitionVerifierMock(s.T())
+	s.actions = New(s.executionLoggerMock, s.definitionReaderWriterMock, s.definitionVerifierMock, s.hashFunctionMock)
 
 	var err error
 	s.inputFolder, err = os.MkdirTemp("", "test-input")
@@ -41,9 +45,8 @@ func (s *ActionRunTestSuite) addMirgrationConfig() (MigrationDefinition, string)
 	migrationDefinition := MigrationDefinition{}
 	var expectedOutput string
 
-	lastHash := ""
 	for i := 0; i < 2; i++ {
-		filename := rand.Text() + ".sh"
+		filename := fmt.Sprintf("step-%d-%s.sh", i, rand.Text())
 
 		runOutput := fmt.Sprintf("step-%d-%s", i, rand.Text())
 		expectedOutput = fmt.Sprintf("%s%s\n", expectedOutput, runOutput)
@@ -53,15 +56,13 @@ echo "` + runOutput + `" >> ` + s.runOutputFile + `
 `
 		scriptFilepath := path.Join(s.inputFolder, filename)
 		err := os.WriteFile(scriptFilepath, []byte(content), 0644)
-		s.NoError(err)
-		lastHash, err = CalculateHash(scriptFilepath, lastHash)
-		s.NoError(err)
+		s.Require().NoError(err)
+
 		migrationDefinition.Steps = append(migrationDefinition.Steps, MigrationStep{
 			Filename:    filename,
 			Description: "step " + strconv.Itoa(i),
-			Hash:        lastHash,
+			Hash:        rand.Text(),
 		})
-
 	}
 
 	return migrationDefinition, expectedOutput
@@ -71,6 +72,8 @@ func (s *ActionRunTestSuite) TestRun() {
 	migrationDefinition, expectedOutput := s.addMirgrationConfig()
 
 	s.definitionReaderWriterMock.EXPECT().Read(path.Join(s.inputFolder, migrationFileName)).Return(migrationDefinition, nil)
+
+	s.definitionVerifierMock.EXPECT().Verify(s.inputFolder, migrationDefinition).Return(true, nil)
 	s.executionLoggerMock.EXPECT().LoadExecutionLog().Return(ExecutionLogs{}, nil)
 
 	s.executionLoggerMock.EXPECT().LogExecution(mock.Anything).Run(func(results []StepResult) {

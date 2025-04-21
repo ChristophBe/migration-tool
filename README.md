@@ -9,7 +9,7 @@ The documentation of the Available commands and flags can be found [here](docs/c
 
 ## Run with Docker
 ```bash
-docker run -v ./examples/migrations:/migrations -v ./output:/output ghcr.io/christophbe/migration-tool:latest -execution-filename ./output/execution-log.yaml run
+docker run -v ./examples/migrations:/migrations -v ./output:/output ghcr.io/christophbe/migration-tool:latest run --folder ./migrations --execution-filename ./output/execution-log.yaml 
 ```
 
 ## Migrations File
@@ -33,8 +33,7 @@ migrations:
 1. Clone this Repository
 2. Install needed development tooling.
    - [Golang CLI](https://go.dev/dl) Version 1.24 or later
-   - [mockery](https://vektra.github.io/mockery/latest/installation/) for generation of mocks
-   - (optional) [cobra-cli](https://github.com/spf13/cobra/tree/main?tab=readme-ov-file#usage) cobra-cli for generation code for new command
+   - (optional) [mockery](https://vektra.github.io/mockery/latest/installation/) for generation of mocks
 
 ## Run and Build 
 ### Run from Code 
@@ -54,7 +53,6 @@ go test ./...
 
 ## Generate Code
 For testing mock implementations of interfaces are used. To generate the mocks [mockery](https://vektra.github.io/mockery/latest/) is used.
-In addition to mock the documentation, for usage of the CLIs also gets generated.
 
 To run regenerate the generated files run the following command:
 ```bash

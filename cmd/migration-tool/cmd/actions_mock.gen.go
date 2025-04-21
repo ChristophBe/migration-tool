@@ -17,6 +17,54 @@ func (_m *ActionsMock) EXPECT() *ActionsMock_Expecter {
 	return &ActionsMock_Expecter{mock: &_m.Mock}
 }
 
+// AddStepFile provides a mock function with given fields: folder, filename, description
+func (_m *ActionsMock) AddStepFile(folder string, filename string, description string) error {
+	ret := _m.Called(folder, filename, description)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AddStepFile")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, string) error); ok {
+		r0 = rf(folder, filename, description)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ActionsMock_AddStepFile_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddStepFile'
+type ActionsMock_AddStepFile_Call struct {
+	*mock.Call
+}
+
+// AddStepFile is a helper method to define mock.On call
+//   - folder string
+//   - filename string
+//   - description string
+func (_e *ActionsMock_Expecter) AddStepFile(folder interface{}, filename interface{}, description interface{}) *ActionsMock_AddStepFile_Call {
+	return &ActionsMock_AddStepFile_Call{Call: _e.mock.On("AddStepFile", folder, filename, description)}
+}
+
+func (_c *ActionsMock_AddStepFile_Call) Run(run func(folder string, filename string, description string)) *ActionsMock_AddStepFile_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(string), args[2].(string))
+	})
+	return _c
+}
+
+func (_c *ActionsMock_AddStepFile_Call) Return(_a0 error) *ActionsMock_AddStepFile_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *ActionsMock_AddStepFile_Call) RunAndReturn(run func(string, string, string) error) *ActionsMock_AddStepFile_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // RecalculateHashes provides a mock function with given fields: folder
 func (_m *ActionsMock) RecalculateHashes(folder string) error {
 	ret := _m.Called(folder)

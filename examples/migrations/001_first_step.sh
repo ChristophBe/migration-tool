@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "Step 1 "
+echo "Step 1"
 ls -l

@@ -17,11 +17,13 @@ func (a *Actions) Run(folder string) error {
 	if err != nil {
 		return fmt.Errorf("error read step definition: %w", err)
 	}
-	changed, err := verifyDefinition(folder, definition)
+
+	ok, err := a.definitionVerifier.Verify(folder, definition)
 	if err != nil {
 		return fmt.Errorf("error verifying migrations before execution: %w", err)
 	}
-	if changed {
+
+	if !ok {
 		return fmt.Errorf("aborting execution: One or more step files have changed")
 	}
 
