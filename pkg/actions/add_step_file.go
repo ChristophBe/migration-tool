@@ -1,6 +1,9 @@
 package actions
 
-import "path"
+import (
+	"path"
+	"path/filepath"
+)
 
 func (a *Actions) AddStepFile(folder, filename string) error {
 
@@ -20,14 +23,19 @@ func (a *Actions) AddStepFile(folder, filename string) error {
 
 	lastHash := migrationDefinition.Steps[len(migrationDefinition.Steps)-1].Hash
 
-	newHash, err := a.hashFunction.CalculateHash(path.Join(folder, filename), lastHash)
+	newHash, err := a.hashFunction.CalculateHash(filename, lastHash)
 
 	if err != nil {
 		return err
 	}
 
+	relativePath, err := filepath.Rel(folder, filename)
+	if err != nil {
+		return err
+	}
+
 	migrationDefinition.Steps = append(migrationDefinition.Steps, MigrationStep{
-		Filename: filename,
+		Filename: relativePath,
 		Hash:     newHash,
 	})
 

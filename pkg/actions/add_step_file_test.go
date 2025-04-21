@@ -128,7 +128,7 @@ func (s *AddStepFileTestSuite) TestAddStepFile() {
 				writeCall.Maybe()
 			}
 
-			err = s.actions.AddStepFile(folder, expectedFileName)
+			err = s.actions.AddStepFile(folder, tmpFile.Name())
 
 			if isErrorTestCase && tc.verificationResult {
 				s.Require().ErrorIs(err, expectedError)
