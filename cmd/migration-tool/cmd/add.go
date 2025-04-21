@@ -4,19 +4,16 @@ Copyright © 2025 Christoph Becker <post@christopb.de>
 package cmd
 
 import (
-	"errors"
-	"fmt"
+	"github.com/ChristophBe/migration-tool/internal/utils"
 	"github.com/spf13/cobra"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add [filename]",
 	Short: "Add a file to the migration definition.",
-	Long:  `Add a file to the migration definition. The file will be added to the end of the migration definition.`,
+	Long: `Add a file to the migration definition. The file will be added to the end of the migration definition.
+Only files in the same folder as the migration.yaml file or in a subfolder of this folder can be added.`,
 	Args: func(cmd *cobra.Command, args []string) error {
 
 		if err := cobra.ExactArgs(1)(cmd, args); err != nil {
@@ -25,29 +22,12 @@ var addCmd = &cobra.Command{
 
 		filename := args[0]
 
-		absPath, err := filepath.Abs(filename)
-		if err != nil {
-			return fmt.Errorf("failed to resolve absolute path: %w", err)
-		}
-
-		if _, err := os.Stat(absPath); err != nil {
-			return fmt.Errorf("file does not exist: %w", err)
-		}
-
-		baseFolderAbs, err := filepath.Abs(baseFolder)
-		if err != nil {
-			return fmt.Errorf("failed to resolve base folder path: %w", err)
-		}
-
-		if !strings.HasPrefix(absPath, baseFolderAbs) {
-			return fmt.Errorf("file must be inside the base folder")
-		}
-
-		_, err = os.Stat(filename)
-		if err != nil && errors.Is(err, os.ErrNotExist) {
+		if err := utils.FileInBaseFolderCheck(baseFolder, filename); err != nil {
 			return err
-		} else if err != nil {
-			return fmt.Errorf("failed to stat file: %w", err)
+		}
+
+		if err := utils.FileExistsCheck(filename); err != nil {
+			return err
 		}
 
 		return nil
